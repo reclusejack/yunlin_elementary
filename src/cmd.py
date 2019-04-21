@@ -16,4 +16,4 @@ else:
     #pdb.set_trace()
     teacher_list = load_data(filename)
     rand_teacher_list = rand_class(teacher_list)
-    #writefile(data, filename, total_class, boy_class, girl_class)
+    writefile(rand_teacher_list, filename)

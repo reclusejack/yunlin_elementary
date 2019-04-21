@@ -6,7 +6,6 @@ import string
 import sys
 import names
 import argparse
-import pdb
 
 reload(sys)
 sys.setdefaultencoding('utf8')

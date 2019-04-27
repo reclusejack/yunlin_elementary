@@ -9,8 +9,7 @@ from write_data import *
 import re;
 
 orig_data = []
-group_data = []
-rule = []
+result_data = []
 th_tab = 0
 
 class NestedPanesDemo(ttk.Frame):
@@ -142,27 +141,26 @@ class NestedPanesDemo(ttk.Frame):
         print ("open filename : %s" %self.filename)
 # clean all data
         del orig_data[:]
-        del group_data[:]
-        del rule[:]
+        del result_data[:]
         for i in self.teacher_tree.get_children():
             self.teacher_tree.delete(i)
 # clean all data
         teacher_list = load_data(self.filenamee)
         tmp = self.filename.replace(".xlsx", "")
         schoolname = re.search(r'.*\d+(.*)$', tmp).group(1)
-        self.grouping_status.set("讀取"+ schoolname +"新生資料")
+        self.grouping_status.set("讀取"+ schoolname +"教師資料")
         self._status_school_update()
-        self._load_teacher_data()
+        #self._load_teacher_data()
 
 
     def group_func(self):
-        print ("grouping!!")
+        print ("randoming!!")
         if self.separate.get() == 1:
             self.total_class = "0"
         else :
             self.total_class = self.entry_class_number.get()
-        group_data = grouping(orig_data, self.total_class, self.boy_class, self.girl_class, rule)
-        self.grouping_status.set("編班結束 請存檔")
+        result_data = rand_class(orig_data)
+        self.grouping_status.set("教師隨機編定班級結束 請存檔")
 
 
     def write_func(self):
@@ -171,12 +169,7 @@ class NestedPanesDemo(ttk.Frame):
         self.grouping_status.set("存檔結束")
 # clean all data
         del orig_data[:]
-        del group_data[:]
-        del rule[:]
-        for i in self.boy_tree.get_children():
-            self.boy_tree.delete(i)
-        for i in self.girl_tree.get_children():
-            self.girl_tree.delete(i)
+        del result_data[:]
         for i in self.teacher_tree.get_children():
             self.teacher_tree.delete(i)
         self.label_teacher_string.set("導師人數:")

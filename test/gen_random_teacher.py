@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 import xlsxwriter
 import random
@@ -6,9 +6,9 @@ import string
 import sys
 import names
 import argparse
+import importlib
 
-reload(sys)
-sys.setdefaultencoding('utf8')
+importlib.reload
 
 parser = argparse.ArgumentParser(
          description='please input teacher count and grade count')
@@ -34,7 +34,7 @@ grade = 0
 x = 0
 serial_number = 1
 while (x < args.number):
-    for g_n in range(1, int(args.number) / int(args.grade)):
+    for g_n in range(1, int(int(args.number) / int(args.grade))):
         gen_teacher = []
         gen_teacher.append(serial_number)
         serial_number += 1

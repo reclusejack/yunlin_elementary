@@ -6,7 +6,7 @@ from tkinter.font import Font
 from rand_class import *
 from load_data import *
 from write_data import *
-import re;
+import re
 
 orig_data = []
 result_data = []
@@ -55,7 +55,6 @@ class NestedPanesDemo(ttk.Frame):
         groupPanel.pack(side=TOP, fill=BOTH, expand=Y)
 
         self._create_wnd_struct(groupPanel)
-        self._input_pane()
         self._button_pane()
         self._status_pane()
         self._grouping_status_pane()
@@ -65,13 +64,11 @@ class NestedPanesDemo(ttk.Frame):
 
         top = ttk.PanedWindow(outer, orient=HORIZONTAL, name='top')
         bot = ttk.PanedWindow(outer, orient=HORIZONTAL, name='bot')
-        tl = ttk.LabelFrame(top, text='學校資訊', padding=3, name='tleft',width=250, height=140)
-        tlm = ttk.LabelFrame(top, text='編班狀態', padding=3, name='tleftmid',width=250, height=140)
-        tm = ttk.LabelFrame(top, text='編班資訊', padding=3, name='tmid', width=250, height=140)
-        tr = ttk.LabelFrame(top, text='操作', padding=3, name='tright', width=250, height=140)
+        tl = ttk.LabelFrame(top, text='學校資訊', padding=3, name='tleft',width=300, height=140)
+        tlm = ttk.LabelFrame(top, text='編班狀態', padding=3, name='tmid',width=300, height=140)
+        tr = ttk.LabelFrame(top, text='操作', padding=3, name='tright', width=300, height=140)
         top.add(tl)
         top.add(tlm)
-        top.add(tm)
         top.add(tr)
         outer.pack(side=LEFT, expand=Y, fill=BOTH)
         outer.add(top)
@@ -92,30 +89,13 @@ class NestedPanesDemo(ttk.Frame):
         bo = ttk.Button(tright, text='存檔', command=self.write_func)
         bo.pack(expand=0, padx=2, pady=3)
 
-
-    def _input_pane(self):
-        self.separate = IntVar()
-        #self.separate.set(0)
-        self.total_class = StringVar()
-        self.boy_class = StringVar()
-        self.girl_class = StringVar()
-        self.separate.set(0)
-        tmid = self.nametowidget('group.outer.top.tmid')
-        leftlabel = ttk.Frame(tmid)
-        rightentry = ttk.Frame(tmid)
-        leftlabel.pack(side=LEFT)
-        rightentry.pack(side=RIGHT)
-        self.label_total = Label(leftlabel, text= "男女合班總數")
-        self.entry_class_number = ttk.Entry(rightentry)
-        self.entry_class_number.pack()
-
     def _grouping_status_pane(self):
-        tlm = self.nametowidget('group.outer.top.tleftmid')
-        leftmidlabel = ttk.Frame(tlm)
-        leftmidlabel.pack()
+        tlm = self.nametowidget('group.outer.top.tmid')
+        midlabel = ttk.Frame(tlm)
+        midlabel.pack()
         self.grouping_status = StringVar()
         self.grouping_status.set("請選擇學校")
-        self.label_grouping_status = Label(leftmidlabel, textvariable = self.grouping_status, fg = "blue", font="16")
+        self.label_grouping_status = Label(midlabel, textvariable = self.grouping_status, fg = "blue", font="16")
         self.label_grouping_status.pack()
 
         botr = self.nametowidget('group.outer.bot.bright')
@@ -133,10 +113,13 @@ class NestedPanesDemo(ttk.Frame):
         self.label_teacher_number.pack()
 
     def _status_school_update(self):
-        self.teacher_number = len(orig_data[th_tab])
+        global orig_data
+        self.teacher_number = len(orig_data)
         self.label_teacher_string.set("導師人數:"+str(self.teacher_number))
 
     def askopenfilename(self):
+        global orig_data
+        global result_data
         self.filename = tkinter.filedialog.askopenfilename()
         print ("open filename : %s" %self.filename)
 # clean all data
@@ -145,26 +128,29 @@ class NestedPanesDemo(ttk.Frame):
         for i in self.teacher_tree.get_children():
             self.teacher_tree.delete(i)
 # clean all data
-        teacher_list = load_data(self.filenamee)
+        orig_data = load_data(self.filename)
         tmp = self.filename.replace(".xlsx", "")
         schoolname = re.search(r'.*\d+(.*)$', tmp).group(1)
         self.grouping_status.set("讀取"+ schoolname +"教師資料")
         self._status_school_update()
-        #self._load_teacher_data()
+        self._load_teacher_data()
 
 
     def group_func(self):
         print ("randoming!!")
-        if self.separate.get() == 1:
-            self.total_class = "0"
-        else :
-            self.total_class = self.entry_class_number.get()
+        global orig_data
+        global result_data
         result_data = rand_class(orig_data)
         self.grouping_status.set("教師隨機編定班級結束 請存檔")
+        for i in self.teacher_tree.get_children():
+            self.teacher_tree.delete(i)
+        self._load_teacher_data()
 
 
     def write_func(self):
-        writefile(self.data, self.filename, self.total_class, self.boy_class, self.girl_class)
+        global result_data
+        global orig_data
+        writefile(result_data, self.filename)
         print ("writing file!!")
         self.grouping_status.set("存檔結束")
 # clean all data
@@ -173,14 +159,13 @@ class NestedPanesDemo(ttk.Frame):
         for i in self.teacher_tree.get_children():
             self.teacher_tree.delete(i)
         self.label_teacher_string.set("導師人數:")
-        self.entry_class_number.delete(0, 'end')
 
     def _create_teacher_treeview(self, parent):
         f = ttk.Frame(parent)
         f.pack(side=TOP, fill=BOTH, expand=Y)
 
         # create the tree and scrollbars
-        self.teacherCols = ('姓名', '序號', '性別')
+        self.teacherCols = ('序號', '年級', '性別', '姓名', '編訂班別')
         self.teacher_tree = ttk.Treeview(columns=self.teacherCols,
                                  show = 'headings')
 
@@ -203,12 +188,12 @@ class NestedPanesDemo(ttk.Frame):
         for c in self.teacherCols:
             self.teacher_tree.heading(c, text=c.title(),
                               command=lambda c=c: self._column_sort(c, MCListDemo.SortDir))
-            self.teacher_tree.column(c, width=Font().measure(c.title()))
+            self.teacher_tree.column(c, minwidth=100, width=Font().measure(c.title()))
 
         # add data to the teacher_tree
-        for item in orig_data[th_tab]:
+        for item in orig_data:
             item[1] = self.convert65536(''.join(item[1]))
-            self.teacher_tree.insert('', 'end', values=(item[1],item[0],item[2]))
+            self.teacher_tree.insert('', 'end', values=(item[0],item[1],item[2], item[3], item[4]))
             item[1] = self.convert65536back(''.join(item[1]))
 
 

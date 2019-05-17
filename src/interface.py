@@ -53,58 +53,52 @@ class NestedPanesDemo(ttk.Frame):
     def _create_group_panel(self):
         groupPanel = ttk.Frame(self, name='group')
         groupPanel.pack(side=TOP, fill=BOTH, expand=Y)
+        groupPanel.pack_propagate(0)
 
-        self._create_wnd_struct(groupPanel)
+        top = ttk.Frame(groupPanel, name='top', height=240)
+        top.pack(side=TOP, fill="both", expand="yes")
+        top.pack_propagate(0)
+        bot = ttk.Frame(groupPanel, name='bot')
+        bot.pack(side=BOTTOM, fill="both", expand="yes")
+        tl = ttk.LabelFrame(top, text='學校資訊', padding=2, name='tleft',height=120)
+        tm = ttk.LabelFrame(top, text='編班狀態', padding=2, name='tmid',height=120)
+        tr = ttk.LabelFrame(top, text='操作', padding=2, name='tright',height=120)
+        tr.pack(side=RIGHT, fill="both", expand="yes")
+        tm.pack(side=RIGHT, fill="both", expand="yes")
+        tl.pack(side=RIGHT, fill="both", expand="yes")
+        br = ttk.LabelFrame(bot, text='導師名單', padding=1, name='bright', width=240, height=500)
+        br.pack(side=LEFT, fill="both", expand="yes")
         self._button_pane()
         self._status_pane()
         self._grouping_status_pane()
-
-    def _create_wnd_struct(self, parent):
-        outer = ttk.PanedWindow(parent, orient=VERTICAL, name='outer')
-
-        top = ttk.PanedWindow(outer, orient=HORIZONTAL, name='top')
-        bot = ttk.PanedWindow(outer, orient=HORIZONTAL, name='bot')
-        tl = ttk.LabelFrame(top, text='學校資訊', padding=3, name='tleft',width=300, height=140)
-        tlm = ttk.LabelFrame(top, text='編班狀態', padding=3, name='tmid',width=300, height=140)
-        tr = ttk.LabelFrame(top, text='操作', padding=3, name='tright', width=300, height=140)
-        top.add(tl)
-        top.add(tlm)
-        top.add(tr)
-        outer.pack(side=LEFT, expand=Y, fill=BOTH)
-        outer.add(top)
-
-        outer.pack(side=RIGHT, expand=Y, fill=BOTH)
-        outer.add(bot)
-
-        br = ttk.LabelFrame(bot, text='導師名單', padding=3, name='bright', width=240, height=420)
-        bot.add(br)
+        top.configure(height=120)
 
     def _button_pane(self):
         # create and add button
-        tright = self.nametowidget('group.outer.top.tright')
+        tright = self.nametowidget('group.top.tright')
         bo = ttk.Button(tright, text='開檔', command=self.askopenfilename)
-        bo.pack(expand=0, padx=2, pady=3)
+        bo.pack(expand=1, padx=3, pady=3)
         bo = ttk.Button(tright, text='編班', command=self.group_func)
-        bo.pack(expand=0, padx=2, pady=3)
+        bo.pack(expand=1, padx=3, pady=3)
         bo = ttk.Button(tright, text='存檔', command=self.write_func)
-        bo.pack(expand=0, padx=2, pady=3)
+        bo.pack(expand=1, padx=3, pady=3)
 
     def _grouping_status_pane(self):
-        tlm = self.nametowidget('group.outer.top.tmid')
-        midlabel = ttk.Frame(tlm)
+        tm = self.nametowidget('group.top.tmid')
+        midlabel = ttk.Frame(tm)
         midlabel.pack()
         self.grouping_status = StringVar()
         self.grouping_status.set("請選擇學校")
         self.label_grouping_status = Label(midlabel, textvariable = self.grouping_status, fg = "blue", font="16")
         self.label_grouping_status.pack()
 
-        botr = self.nametowidget('group.outer.bot.bright')
+        botr = self.nametowidget('group.bot.bright')
         teacherframe = ttk.Frame(botr)
         teacherframe.pack(side=TOP, fill=BOTH, expand=Y)
         self._create_teacher_treeview(teacherframe)
 
     def _status_pane(self):
-        tleft = self.nametowidget('group.outer.top.tleft')
+        tleft = self.nametowidget('group.top.tleft')
         leftlabel = ttk.Frame(tleft)
         leftlabel.pack()
         self.label_teacher_string = StringVar()

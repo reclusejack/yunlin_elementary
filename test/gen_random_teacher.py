@@ -26,7 +26,7 @@ args = parser.parse_args()
 print ("Input number: %s" % args.number )
 
 grade_list = ["一","二","三","四","五","六"]
-workbook = xlsxwriter.Workbook('108**國小導師名冊.xlsx')
+workbook = xlsxwriter.Workbook('108鎮東國小導師名冊.xlsx')
 teacher_sheet = workbook.add_worksheet('導師名冊')
 
 teacher_list = []
